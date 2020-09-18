@@ -1,0 +1,36 @@
+{
+  "name": "with-typescript",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "type-check": "tsc",
+    "generate-types": "gq $(node scripts/get-env-variable.js API_URL) --introspect > schema.graphql && node scripts/convert-schema.js && graphql-codegen --config codegen.config.yml"
+  },
+  "dependencies": {
+    "@graphql-codegen/cli": "^1.17.8",
+    "@graphql-codegen/typescript": "^1.17.9",
+    "@graphql-codegen/typescript-operations": "^1.17.8",
+    "@types/reflexbox": "^4.0.1",
+    "@types/styled-components": "^5.1.3",
+    "babel-plugin-styled-components": "^1.11.1",
+    "graphql": "^15.3.0",
+    "graphqurl": "^0.3.3",
+    "next": "latest",
+    "next-compose-plugins": "^2.2.0",
+    "next-transpile-modules": "^4.1.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "reflexbox": "^4.0.6",
+    "styled-components": "^5.2.0",
+    "swr": "^0.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.21",
+    "@types/react": "^16.9.16",
+    "@types/react-dom": "^16.9.4",
+    "typescript": "4.0"
+  },
+  "license": "MIT"
+}
