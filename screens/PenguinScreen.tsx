@@ -96,7 +96,7 @@ export default function TabPenguin() {
         <Leaf />
         <HSeperator />
         <Col>
-          <CO2Text>1.2 kg CO<Subscript>2</Subscript></CO2Text>
+          <CO2Text>1.2 kg CO2<</CO2Text>
           <Seperator />
           <CO2subtext>durchschnittlich pro Produkt in den letzten 30 Tagen</CO2subtext>
         </Col>
