@@ -1,12 +1,14 @@
-import React, { useMemo } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { FunctionComponent } from "react";
 import { ActivityIndicator, Image, Text, View } from "react-native";
 import styled from "styled-components";
 import useSwr from "swr";
 import { fetchMigros } from "../utilities/api";
+import { AppContext } from "../utilities/context";
+import Leaf from "./Leaf";
 import Price from "./Price";
 
-type IProps = { ean: string };
+type IProps = { ean: string; quantity: number };
 
 const ItemView = styled(View)`
   flex-direction: row;
@@ -47,53 +49,74 @@ const QuantityText = styled(Text)`
   font-size: 30px;
 `;
 
-export const ListItem: FunctionComponent<IProps> = React.memo(({ ean }) => {
-  const { data, error, isValidating } = useSwr(ean, fetchMigros);
+const LeafWrapper = styled(View)`
+  margin-left: 15px;
+`;
 
-  const product = useMemo(() => {
-    if (data?.products && data.products.length > 0) {
-      return data.products[0];
+export const ListItem: FunctionComponent<IProps> = React.memo(
+  ({ ean, quantity }) => {
+    const { data, error, isValidating } = useSwr(
+      ["MIGROS_PRODUCT", ean],
+      (_, ean) => fetchMigros(ean)
+    );
+
+    const { removeProduct } = useContext(AppContext);
+
+    const product = useMemo(() => {
+      if (data?.products && data.products.length > 0) {
+        return data.products[0];
+      }
+
+      return null;
+    }, [data]);
+
+    useEffect(() => {
+      if (data?.products && data.products.length === 0) {
+        //useless
+        removeProduct(ean);
+      }
+    }, [data]);
+
+    const origin = useMemo(() => {
+      if (product?.origins.producing_country) {
+        return product.origins.producing_country;
+      } else if (product?.origins.country_of_origin) {
+        return `aus ${product.origins.country_of_origin}`;
+      }
+
+      return null;
+    }, [product]);
+
+    if (!product) {
+      return (
+        <ItemView>
+          <ActivityIndicator size="small" color="#000" />
+        </ItemView>
+      );
     }
 
-    return null;
-  }, [data]);
-
-  const origin = useMemo(() => {
-    if (product?.origins.producing_country) {
-      return product.origins.producing_country;
-    } else if (product?.origins.country_of_origin) {
-      return `aus ${product.origins.country_of_origin}`;
-    }
-
-    return null;
-  }, [product]);
-
-  if (!product) {
     return (
       <ItemView>
-        <ActivityIndicator size="small" color="#000" />
+        <ItemRow>
+          <Image
+            source={{ uri: product.image_transparent.original }}
+            style={{ width: 75, height: 75 }}
+          />
+          <Name>
+            <ProductTitle>{product.name}</ProductTitle>
+            <ProductOrigin>{origin}</ProductOrigin>
+          </Name>
+        </ItemRow>
+        <ItemRow>
+          <QuantityView>
+            <QuantityText>{quantity}</QuantityText>
+          </QuantityView>
+          <Price>{quantity * product.price.item.price}</Price>
+          <LeafWrapper>
+            <Leaf />
+          </LeafWrapper>
+        </ItemRow>
       </ItemView>
     );
   }
-
-  return (
-    <ItemView>
-      <ItemRow>
-        <Image
-          source={{ uri: product.image_transparent.original }}
-          style={{ width: 75, height: 75 }}
-        />
-        <Name>
-          <ProductTitle>{product.name}</ProductTitle>
-          <ProductOrigin>{origin}</ProductOrigin>
-        </Name>
-      </ItemRow>
-      <ItemRow>
-        <QuantityView>
-          <QuantityText>3</QuantityText>
-        </QuantityView>
-        <Price>{product.price.item.price}</Price>
-      </ItemRow>
-    </ItemView>
-  );
-});
+);

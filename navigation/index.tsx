@@ -4,7 +4,6 @@ import * as React from "react";
 
 import NotFoundScreen from "../screens/NotFoundScreen";
 import BottomTabNavigator from "./BottomTabNavigator";
-import LinkingConfiguration from "./LinkingConfiguration";
 
 export type RootStackParamList = {
   Root: undefined;
@@ -15,7 +14,7 @@ export type RootStackParamList = {
 // "Fundamentals" guide: https://reactnavigation.org/docs/getting-started
 export default function Navigation({}) {
   return (
-    <NavigationContainer linking={LinkingConfiguration} theme={DefaultTheme}>
+    <NavigationContainer theme={DefaultTheme}>
       <RootNavigator />
     </NavigationContainer>
   );

@@ -18,14 +18,9 @@ interface IProps {
 }
 
 const Price: FunctionComponent<IProps> = ({ children }) => {
-  const price = children.toString().split(".");
-
-  const fr = price[0];
-  const rp = price.length > 0 ? price[1].padEnd(2, "0") : "00";
-
   return (
     <PriceView>
-      <PriceText>{`${fr}.${rp}`}</PriceText>
+      <PriceText>{children.toFixed(2)}</PriceText>
     </PriceView>
   );
 };

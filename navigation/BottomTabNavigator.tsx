@@ -9,6 +9,7 @@ import Colors from "../constants/Colors";
 import PenguinScreen from "../screens/PenguinScreen";
 import ScannerScreen from "../screens/ScannerScreen";
 import MapScreen from "../screens/MapScreen";
+import ProductDetailScreen from "../screens/ProductDetailScreen";
 
 export type BottomTabParamList = {
   Penguin: {};
@@ -22,6 +23,7 @@ export type PenguinParamList = {
 
 export type ScannerParamList = {
   ScannerScreen: undefined;
+  ProductDetail: { ean: string | null };
 };
 
 export type MapParamList = {
@@ -107,6 +109,12 @@ function ScannerNavigator() {
         name="ScannerScreen"
         component={ScannerScreen}
         options={{ headerTitle: "Scanner" }}
+      />
+      <ScannerStack.Screen
+        name="ProductDetail"
+        component={ProductDetailScreen}
+        options={{ headerTitle: "Product" }}
+        initialParams={{ ean: null }}
       />
     </ScannerStack.Navigator>
   );

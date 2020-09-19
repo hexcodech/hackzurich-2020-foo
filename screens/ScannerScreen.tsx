@@ -1,6 +1,13 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { useState, useEffect, useContext, FunctionComponent } from "react";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components";
 import { BarCodeScannedCallback, BarCodeScanner } from "expo-barcode-scanner";
@@ -8,6 +15,13 @@ import Animated from "react-native-reanimated";
 import BottomSheet from "reanimated-bottom-sheet";
 import Layout from "../constants/Layout";
 import { ListItem } from "../components/ListItem";
+import { AppContext } from "../utilities/context";
+import {
+  BottomTabParamList,
+  ScannerParamList,
+} from "../navigation/BottomTabNavigator";
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const ScreenView = styled(View)`
   position: relative;
@@ -53,11 +67,16 @@ const CartEmpty = styled(Text)`
   font-size: 16px;
 `;
 
-export default function TabScreen() {
+interface IProps {
+  route: RouteProp<ScannerParamList, "ScannerScreen">;
+  navigation: StackNavigationProp<ScannerParamList, "ScannerScreen">;
+}
+
+const ScannerScreen: FunctionComponent<IProps> = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [enabled, setEnabled] = useState(true);
-  const [ean, setEan] = useState<string | null>(null);
   const sheetRef = React.useRef<any>(null);
+  const { products, addProduct } = useContext(AppContext);
 
   useEffect(() => {
     (async () => {
@@ -74,10 +93,11 @@ export default function TabScreen() {
 
     setTimeout(() => {
       setEnabled(true);
-    }, 300);
-    setEan(data);
+    }, 1000);
 
-    sheetRef.current.snapTo(0);
+    addProduct(data, 1);
+
+    sheetRef.current.snapTo(1);
   };
 
   return (
@@ -95,9 +115,10 @@ export default function TabScreen() {
 
       <BottomSheet
         ref={sheetRef}
-        snapPoints={[425, 40]}
-        initialSnap={1}
+        snapPoints={[Layout.window.height - 100, 425, 40]}
+        initialSnap={2}
         borderRadius={10}
+        enabledContentTapInteraction={false}
         renderContent={() => (
           <>
             <HeaderView>
@@ -106,12 +127,29 @@ export default function TabScreen() {
               </PanelHeaderView>
             </HeaderView>
             <PanelView>
-              {!ean && <CartEmpty>Shopping cart is currently empty.</CartEmpty>}
-              {ean && <ListItem ean={ean} />}
+              <ScrollView>
+                {products.length === 0 && (
+                  <CartEmpty>Shopping cart is currently empty.</CartEmpty>
+                )}
+                {products.map((product) => (
+                  <TouchableOpacity
+                    key={product.ean}
+                    onPress={() => {
+                      navigation.navigate("ProductDetail", {
+                        ean: product.ean,
+                      });
+                    }}
+                  >
+                    <ListItem ean={product.ean} quantity={product.quantity} />
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
             </PanelView>
           </>
         )}
       />
     </ScreenView>
   );
-}
+};
+
+export default ScannerScreen;

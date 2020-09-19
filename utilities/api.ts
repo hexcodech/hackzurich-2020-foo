@@ -18,7 +18,8 @@ export const fetchMigros = (
     .then((resp) => resp.json())
     .then((data) => {
       if ("code" in data) {
-        return fetchMigros(ean);
+        console.log(data);
+        return Promise.reject("dumb api");
       }
 
       return data;
