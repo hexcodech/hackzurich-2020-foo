@@ -21,7 +21,7 @@ export default function App() {
           )
         );
       } else {
-        setProducts([...products, { ean, quantity, score: undefined }]);
+        setProducts([{ ean, quantity, score: undefined }, ...products]);
       }
     },
     [products]
