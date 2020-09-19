@@ -3,7 +3,7 @@ import { FunctionComponent } from "react";
 import { ActivityIndicator, Image, Text, View } from "react-native";
 import styled from "styled-components";
 import useSwr from "swr";
-import { fetchMigros } from "../utilities/api";
+import { fetchEco, fetchMigros, MAP_RATING_TO_COLOR } from "../utilities/api";
 import { AppContext } from "../utilities/context";
 import Leaf from "./Leaf";
 import Price from "./Price";
@@ -38,14 +38,14 @@ const ProductOrigin = styled(Text)`
 `;
 
 const QuantityView = styled(View)`
-  border: #4990e2 2px solid;
+  border: #000 2px solid;
   padding: 15px;
   border-radius: 10px;
 
   margin-right: 15px;
 `;
 const QuantityText = styled(Text)`
-  color: #4990e2;
+  color: #000;
   font-size: 30px;
 `;
 
@@ -69,6 +69,12 @@ export const ListItem: FunctionComponent<IProps> = React.memo(
 
       return null;
     }, [data]);
+
+    const { data: eaternityData } = useSwr(
+      ["EATERNITY", product?.name],
+      (_, name) =>
+        name ? fetchEco(name, origin || undefined) : Promise.resolve(null)
+    );
 
     useEffect(() => {
       if (data?.products && data.products.length === 0) {
@@ -113,7 +119,9 @@ export const ListItem: FunctionComponent<IProps> = React.memo(
           </QuantityView>
           <Price>{quantity * product.price.item.price}</Price>
           <LeafWrapper>
-            <Leaf />
+            <Leaf
+              color={MAP_RATING_TO_COLOR[eaternityData?.recipe.rating || "A"]}
+            />
           </LeafWrapper>
         </ItemRow>
       </ItemView>

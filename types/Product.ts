@@ -1,7 +1,9 @@
 export type ProductEcoMeta = {
-  "co2-value": string;
-  rating: "A" | "B" | "C" | "D" | "E";
-  "food-unit": number;
+  recipe: {
+    "co2-value": string;
+    rating: "A" | "B" | "C" | "D" | "E";
+    "food-unit": number;
+  };
 };
 
 interface NutritionFacts {
@@ -43,7 +45,7 @@ export interface MigrosProduct {
     standard: NutritionFacts;
     portion: NutritionFacts;
   };
-  additional_nutrition_facts: {
+  additional_nutrition_facts?: {
     standard: NutritionFacts;
     portion: NutritionFacts;
   };

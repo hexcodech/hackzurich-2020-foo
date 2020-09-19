@@ -27,6 +27,10 @@ export default function App() {
 
   const updateQuantity = useCallback(
     (ean: string, quantity: number) => {
+      if (quantity <= 0) {
+        removeProduct(ean);
+        return;
+      }
       if (products.find((p) => p.ean === ean)) {
         setProducts(
           products.map((p) => (p.ean === ean ? { ean: p.ean, quantity } : p))

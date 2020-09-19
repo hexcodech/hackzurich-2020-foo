@@ -4,15 +4,15 @@ import { Text, TouchableOpacity } from "react-native";
 import styled from "styled-components";
 
 const StyledBtn = styled(TouchableOpacity)<{ marginBottom?: number }>`
-  border-color: #4990e2;
+  border-color: #000;
   border-width: 2px;
   border-radius: 5px;
-  padding: 5px 10px;
+  padding: 2px 5px;
   margin-bottom: ${({ marginBottom }) => (marginBottom ? marginBottom : 0)}px;
 `;
 
 const StyledText = styled(Text)`
-  color: #4990e2;
+  color: #000;
   font-size: 20px;
 `;
 
