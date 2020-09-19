@@ -16,6 +16,7 @@ export const fetchMigros = (
     {
       headers: {
         Authorization: `Basic ${base64.encode(`${username}:${password}`)}`,
+        "Accept-Language": "de-DE, de-CH, de",
       },
     }
   )

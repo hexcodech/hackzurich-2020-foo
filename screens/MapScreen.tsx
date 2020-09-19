@@ -16,18 +16,17 @@ import {
 } from "react-native-table-component";
 import useSWR from "swr";
 import { getGeoPurchases } from "../utilities/api";
+import WebView from "react-native-webview";
 
-const ScreenView = styled(SafeAreaView)`
-  position: relative;
+const ScreenView = styled(View)`
   flex: 1;
-  background-color: #fff;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-content: flex-start;
 `;
 
-const StyledText = styled(Text)`
-  font-size: 20px;
-  font-weight: bold;
+const StyledWebView = styled(WebView)`
+  flex-grow: 1;
 `;
 
 const PanelView = styled(View)`
@@ -59,9 +58,11 @@ const PanelHandleView = styled(View)`
 const tableHead = ["Gemeinde", "g CO2", "Einkäufe"];
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: "#fff" },
   head: { height: 40, backgroundColor: "#fff0" },
   text: { margin: 10 },
+  web: {
+    width: Layout.window.width,
+  },
 });
 
 export default function TabMap() {
@@ -71,10 +72,13 @@ export default function TabMap() {
 
   return (
     <ScreenView>
-      <StyledText>Tab Map</StyledText>
+      <StyledWebView
+        source={{ uri: "http://192.168.0.42:1234" }}
+        style={styles.web}
+      />
       <BottomSheet
         ref={sheetRef}
-        snapPoints={[Layout.window.height - 100, 425, 13]}
+        snapPoints={[Layout.window.height - 100, 425, 40]}
         initialSnap={2}
         borderRadius={10}
         enabledContentTapInteraction={false}

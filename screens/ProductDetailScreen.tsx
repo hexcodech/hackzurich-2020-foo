@@ -19,7 +19,7 @@ import { AppContext } from "../utilities/context";
 import Button from "../components/Button";
 import Leaf from "../components/Leaf";
 import Heart from "../components/Heart";
-import Airplane from "../components/Airplane";
+import { NutritionFacts } from "../types/Product";
 import Price from "../components/Price";
 import Money from "../components/Money";
 
@@ -102,6 +102,8 @@ interface IProps {
   navigation: StackNavigationProp<ScannerParamList, "ProductDetail">;
 }
 
+type Nutrient = NutritionFacts["nutrients"];
+
 const ProductDetailScreen: React.FunctionComponent<IProps> = ({
   navigation,
   route: {
@@ -128,17 +130,6 @@ const ProductDetailScreen: React.FunctionComponent<IProps> = ({
     ean,
   ]);
 
-  const health = useMemo(() => {
-    if (!product || product.package.brutto_weight) {
-      return null;
-    }
-
-    const weight = product.package.brutto_weight;
-    const energy = product.nutrition_facts.standard.nutrients.find(
-      (n) => n.code === "kJ"
-    );
-  }, [product]);
-
   useEffect(() => {
     if (data?.products && data.products.length === 0 && ean) {
       //useless
@@ -147,9 +138,9 @@ const ProductDetailScreen: React.FunctionComponent<IProps> = ({
   }, [data]);
 
   const origin = useMemo(() => {
-    if (product?.origins.producing_country) {
+    if (product?.origins?.producing_country) {
       return product.origins.producing_country;
-    } else if (product?.origins.country_of_origin) {
+    } else if (product?.origins?.country_of_origin) {
       return `aus ${product.origins.country_of_origin}`;
     }
 
@@ -186,6 +177,12 @@ const ProductDetailScreen: React.FunctionComponent<IProps> = ({
       </ScreenView>
     );
   }
+
+  //@ts-ignore
+  const nut: Nutrient[] = [
+    ...(product.nutrition_facts?.standard.nutrients || []),
+    ...(product.additional_nutrition_facts?.standard.nutrients || []),
+  ];
 
   return (
     <ScreenView>
@@ -254,38 +251,42 @@ const ProductDetailScreen: React.FunctionComponent<IProps> = ({
             )}
           </View>
         </IconRow>
-        <IconRow>
-          <IconWrapper>
-            <Heart />
-          </IconWrapper>
-          <View>
-            <Text style={{ marginBottom: 4, fontWeight: "800" }}>
-              Anteil täglicher Bedarf
-            </Text>
-            {Object.keys(NUTRIENTS_SHOULD)
-              .map((c) => {
-                const n = product.nutrition_facts.standard.nutrients.find(
-                  (n) => n.code === c
-                );
-                if (!n) {
-                  return null;
-                }
+        {nut.length > 0 && (
+          <IconRow>
+            <IconWrapper>
+              <Heart />
+            </IconWrapper>
+            <View>
+              <Text style={{ marginBottom: 4, fontWeight: "800" }}>
+                Anteil täglicher Bedarf
+              </Text>
+              {Object.keys(NUTRIENTS_SHOULD)
+                .map((c) => {
+                  const n = product.nutrition_facts?.standard.nutrients.find(
+                    (n) => n.code === c
+                  );
+                  if (!n) {
+                    return null;
+                  }
 
-                const p = ((100 * n.quantity) / NUTRIENTS_SHOULD[c]).toFixed(2);
+                  const p = ((100 * n.quantity) / NUTRIENTS_SHOULD[c]).toFixed(
+                    2
+                  );
 
-                return [`${n.name.replaceAll("davon ", "")}: ${p}%`, p];
-              })
-              .filter((e) => e)
-              //@ts-ignore
-              .sort(([_, v1], [__, v2]) => v2 - v1)
-              .slice(0, 2)
-              .map((s, index) => (
-                <Text key={index} style={{ marginBottom: 3 }}>
-                  {s[0]}
-                </Text>
-              ))}
-          </View>
-        </IconRow>
+                  return [`${n.name.replaceAll("davon ", "")}: ${p}%`, p];
+                })
+                .filter((e) => e)
+                //@ts-ignore
+                .sort(([_, v1], [__, v2]) => v2 - v1)
+                .slice(0, 2)
+                .map((s, index) => (
+                  <Text key={index} style={{ marginBottom: 3 }}>
+                    {s[0]}
+                  </Text>
+                ))}
+            </View>
+          </IconRow>
+        )}
         {/* <IconRow>
           <IconWrapper>
             <Airplane />
@@ -295,19 +296,18 @@ const ProductDetailScreen: React.FunctionComponent<IProps> = ({
             <TextWrapper>hi</TextWrapper>
           </View>
         </IconRow> */}
-        <View
-          style={{
-            borderBottomColor: "black",
-            borderBottomWidth: 1,
-            marginTop: 20,
-            marginBottom: 20,
-          }}
-        />
-        <TitleWrapper>Inhaltsstoffe</TitleWrapper>
-        {[
-          ...product.nutrition_facts.standard.nutrients,
-          ...(product.additional_nutrition_facts?.standard.nutrients || []),
-        ].map((n) => (
+        {nut.length > 0 && (
+          <View
+            style={{
+              borderBottomColor: "black",
+              borderBottomWidth: 1,
+              marginTop: 20,
+              marginBottom: 20,
+            }}
+          />
+        )}
+        {nut.length > 0 && <TitleWrapper>Inhaltsstoffe</TitleWrapper>}
+        {nut.map((n) => (
           <TextWrapper key={n.code}>
             {`${
               !n.rda_percent_operator || n.rda_percent_operator === "="

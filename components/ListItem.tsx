@@ -94,9 +94,9 @@ export const ListItem: FunctionComponent<IProps> = React.memo(
     }, [data, eaternityData]);
 
     const origin = useMemo(() => {
-      if (product?.origins.producing_country) {
+      if (product?.origins?.producing_country) {
         return product.origins.producing_country;
-      } else if (product?.origins.country_of_origin) {
+      } else if (product?.origins?.country_of_origin) {
         return `aus ${product.origins.country_of_origin}`;
       }
 

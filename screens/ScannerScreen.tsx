@@ -140,7 +140,10 @@ const ScannerScreen: FunctionComponent<IProps> = ({ navigation }) => {
             <PanelView>
               <ScrollView>
                 {products.length === 0 && (
-                  <CartEmpty>Shopping cart is currently empty.</CartEmpty>
+                  <CartEmpty>
+                    Der Warenkorb ist moment leer. Scannen Sie die den Barcode
+                    auf Produkten.
+                  </CartEmpty>
                 )}
                 {products.map((product) => (
                   <TouchableOpacity
@@ -170,6 +173,7 @@ const ScannerScreen: FunctionComponent<IProps> = ({ navigation }) => {
                     <Text style={{ color: "#fff" }}>Einkauf abschliessen</Text>
                   </Checkout>
                 )}
+                <View style={{ height: 280 }} />
               </ScrollView>
             </PanelView>
           </>

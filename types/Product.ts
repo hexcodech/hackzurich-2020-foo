@@ -6,7 +6,7 @@ export type ProductEcoMeta = {
   };
 };
 
-interface NutritionFacts {
+export interface NutritionFacts {
   nutrients: {
     code: string;
     name: string;
@@ -41,7 +41,7 @@ export interface MigrosProduct {
     parent_code: string;
     image: { original: string; stack: string };
   }[];
-  nutrition_facts: {
+  nutrition_facts?: {
     standard: NutritionFacts;
     portion: NutritionFacts;
   };
@@ -75,7 +75,7 @@ export interface MigrosProduct {
       display_quantity: string;
     };
   };
-  origins: {
+  origins?: {
     producing_country?: "Schweizer Produkt";
     country_of_origin?: string;
   };
