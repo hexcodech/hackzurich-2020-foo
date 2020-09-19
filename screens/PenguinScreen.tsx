@@ -1,27 +1,31 @@
 import * as React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components";
 import { LineChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Leaf from "../components/Leaf";
+import useSWR from "swr";
+import { getPurchases } from "../utilities/api";
 
-const color = 'rgb(0, 153, 255)';
+const color = "rgb(0, 153, 255)";
 
 const screenWidth = Dimensions.get("window").width;
 
-const data = {
-  labels: ["January", "February", "March", "April", "May", "June"],
-  datasets: [
-    {
-      data: [11.5, 10.4, 9, 8.5, 7.3, 6.6],
-      color: (opacity = 1) => `rgba(0, 153, 255, ${opacity})`, // optional
-      strokeWidth: 5 // optional
-    }
-  ],
-  //legend: ["Rainy Days"] // optional
-};
+const MONTHS = [
+  "Januar",
+  "Februar",
+  "März",
+  "April",
+  "Mai",
+  "Juni",
+  "Juli",
+  "August",
+  "September",
+  "Oktober",
+  "November",
+  "Dezember",
+];
 
 const chartConfig = {
   backgroundColor: "white",
@@ -29,15 +33,17 @@ const chartConfig = {
   backgroundGradientTo: "white",
   color: (opacity = 1) => color,
   //barPercentage: 0.5,
-  useShadowColorFromDataset: false // optional
+  useShadowColorFromDataset: false, // optional
 };
 
 const ScreenView = styled(SafeAreaView)`
   position: relative;
   flex: 1;
   background-color: #fff;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
+
+  padding: 0 15px;
 `;
 
 const StyledText = styled(Text)`
@@ -47,16 +53,14 @@ const StyledText = styled(Text)`
 
 const CO2Text = styled(Text)`
   font-size: 30px;
-  font-weight: bold;
 `;
 
 const CO2subtext = styled(Text)`
   font-size: 15px;
-  font-weight: bold;
 `;
 
 const Seperator = styled(View)`
-  height: 10px;
+  height: 5px;
   width: 80%;
 `;
 
@@ -69,46 +73,78 @@ const Subscript = styled(Text)`
   vertical-align: sub;
 `;
 
-
 const Row = styled(View)`
   flex-direction: row;
+  align-items: center;
 `;
 
 const Col = styled(View)`
   flex-direction: column;
-`
+`;
 
 export default function TabPenguin() {
+  const { data } = useSWR(["purchases"], () =>
+    Promise.all(
+      new Array(5)
+        .fill(0)
+        .map((_, index) =>
+          getPurchases(Date.now() - index * 1000 * 60 * 60 * 24 * 30)
+        )
+        .reverse()
+    )
+  );
+
+  const month = new Date().getMonth();
+  const last4 = [
+    ...(month - 3 < 0 ? MONTHS.slice(11 + (month - 3), 11) : []),
+    ...MONTHS.slice(Math.max(month - 3, 0), month + 1),
+  ];
+
   return (
     <ScreenView>
-      <LineChart
-        data={data}
-        width={screenWidth}
-        height={256}
-        verticalLabelRotation={30}
-        chartConfig={chartConfig}
-        bezier
-        withDots={false}
-      />
-      
+      {data ? (
+        <LineChart
+          data={{
+            labels: last4,
+            datasets: [
+              {
+                data: data.map((e) => e.score),
+                color: (opacity = 1) => `rgba(0, 153, 255, ${opacity})`, // optional
+                strokeWidth: 5, // optional
+              },
+            ],
+            //legend: ["Rainy Days"] // optional
+          }}
+          width={screenWidth - 50}
+          height={256}
+          verticalLabelRotation={30}
+          chartConfig={chartConfig}
+          bezier
+          withDots={false}
+          fromZero
+        />
+      ) : (
+        <ActivityIndicator size="large" color="#000" />
+      )}
+      <Seperator />
+      <Seperator />
       <Seperator />
       <Row>
         <Leaf />
         <HSeperator />
         <Col>
-          <CO2Text>1.2 kg CO2</CO2Text>
+          <CO2Text>{data ? data[data.length - 1].score : "-"}g CO2</CO2Text>
           <Seperator />
-          <CO2subtext>durchschnittlich pro Produkt in den letzten 30 Tagen</CO2subtext>
+          <CO2subtext>Schnitt der letzten 30 Tagen</CO2subtext>
         </Col>
-        
       </Row>
-      <Seperator />
+      {/* <Seperator />
       <MaterialCommunityIcons
-              size={300}
-              name="penguin"
-              color={color}
-              style={{ marginBottom: -3 }}
-            />
+        size={50}
+        name="penguin"
+        color={color}
+        style={{ marginBottom: -3 }}
+      /> */}
     </ScreenView>
   );
 }

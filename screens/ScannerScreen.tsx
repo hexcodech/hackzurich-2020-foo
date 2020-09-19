@@ -22,6 +22,7 @@ import {
 } from "../navigation/BottomTabNavigator";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { submitPurchase } from "../utilities/api";
 
 const ScreenView = styled(View)`
   position: relative;
@@ -67,6 +68,16 @@ const CartEmpty = styled(Text)`
   font-size: 16px;
 `;
 
+const Checkout = styled(TouchableOpacity)`
+  width: 100%;
+  border-radius: 5px;
+  padding: 10px;
+  align-items: center;
+  background-color: #4990e2;
+
+  margin-top: 10px;
+`;
+
 interface IProps {
   route: RouteProp<ScannerParamList, "ScannerScreen">;
   navigation: StackNavigationProp<ScannerParamList, "ScannerScreen">;
@@ -76,7 +87,7 @@ const ScannerScreen: FunctionComponent<IProps> = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [enabled, setEnabled] = useState(true);
   const sheetRef = React.useRef<any>(null);
-  const { products, addProduct } = useContext(AppContext);
+  const { products, addProduct, setProducts } = useContext(AppContext);
 
   useEffect(() => {
     (async () => {
@@ -143,6 +154,22 @@ const ScannerScreen: FunctionComponent<IProps> = ({ navigation }) => {
                     <ListItem ean={product.ean} quantity={product.quantity} />
                   </TouchableOpacity>
                 ))}
+                {(products.length > 0 || true) && (
+                  <Checkout
+                    onPress={() => {
+                      Promise.all(
+                        products.map((p) =>
+                          submitPurchase(p.score || 0, p.quantity)
+                        )
+                      ).then(() => {
+                        sheetRef.current.snapTo(2);
+                        setProducts([]);
+                      });
+                    }}
+                  >
+                    <Text style={{ color: "#fff" }}>Einkauf abschliessen</Text>
+                  </Checkout>
+                )}
               </ScrollView>
             </PanelView>
           </>

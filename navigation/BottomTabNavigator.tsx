@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import * as React from "react";
 
@@ -42,10 +43,11 @@ export default function BottomTabNavigator() {
         name="Penguin"
         component={PenguinNavigator}
         options={{
+          title: "Verlauf",
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
+            <AntDesign
               size={24}
-              name="penguin"
+              name="linechart"
               color={color}
               style={{ marginBottom: -3 }}
             />
@@ -94,7 +96,7 @@ function PenguinNavigator() {
       <PenguinStack.Screen
         name="PenguinScreen"
         component={PenguinScreen}
-        options={{ headerTitle: "Pinguuu" }}
+        options={{ headerTitle: "CO2 Verlauf" }}
       />
     </PenguinStack.Navigator>
   );

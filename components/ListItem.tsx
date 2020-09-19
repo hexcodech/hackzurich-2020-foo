@@ -60,7 +60,7 @@ export const ListItem: FunctionComponent<IProps> = React.memo(
       (_, ean) => fetchMigros(ean)
     );
 
-    const { removeProduct } = useContext(AppContext);
+    const { products, removeProduct, updateProduct } = useContext(AppContext);
 
     const product = useMemo(() => {
       if (data?.products && data.products.length > 0) {
@@ -80,8 +80,18 @@ export const ListItem: FunctionComponent<IProps> = React.memo(
       if (data?.products && data.products.length === 0) {
         //useless
         removeProduct(ean);
+      } else if (eaternityData) {
+        const p = products.find((p) => p.ean === ean);
+
+        if (p) {
+          updateProduct(
+            p.ean,
+            p.quantity,
+            parseInt(eaternityData.recipe["co2-value"])
+          );
+        }
       }
-    }, [data]);
+    }, [data, eaternityData]);
 
     const origin = useMemo(() => {
       if (product?.origins.producing_country) {

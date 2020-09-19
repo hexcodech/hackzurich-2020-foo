@@ -113,7 +113,7 @@ const ProductDetailScreen: React.FunctionComponent<IProps> = ({
     (_, ean) => fetchMigros(ean)
   );
 
-  const { products, removeProduct, updateQuantity } = useContext(AppContext);
+  const { products, removeProduct, updateProduct } = useContext(AppContext);
 
   const product = useMemo(() => {
     if (data?.products && data.products.length > 0) {
@@ -162,6 +162,23 @@ const ProductDetailScreen: React.FunctionComponent<IProps> = ({
       name ? fetchEco(name, origin || undefined) : Promise.resolve(null)
   );
 
+  useEffect(() => {
+    if (data?.products && data.products.length === 0 && ean) {
+      //useless
+      removeProduct(ean);
+    } else if (eaternityData) {
+      const p = products.find((p) => p.ean === ean);
+
+      if (p) {
+        updateProduct(
+          p.ean,
+          p.quantity,
+          parseInt(eaternityData.recipe["co2-value"])
+        );
+      }
+    }
+  }, [data, eaternityData]);
+
   if (!product || !ean) {
     return (
       <ScreenView>
@@ -188,7 +205,7 @@ const ProductDetailScreen: React.FunctionComponent<IProps> = ({
               title="+"
               onPress={() =>
                 cartEntry?.quantity &&
-                updateQuantity(ean, cartEntry.quantity + 1)
+                updateProduct(ean, cartEntry.quantity + 1, cartEntry.score)
               }
               marginBottom={4}
             />
@@ -197,7 +214,7 @@ const ProductDetailScreen: React.FunctionComponent<IProps> = ({
               onPress={() =>
                 cartEntry?.quantity &&
                 cartEntry.quantity > 1 &&
-                updateQuantity(ean, cartEntry.quantity - 1)
+                updateProduct(ean, cartEntry.quantity - 1, cartEntry.score)
               }
             />
           </Buttons>
@@ -231,7 +248,7 @@ const ProductDetailScreen: React.FunctionComponent<IProps> = ({
                   Bewertung: {eaternityData.recipe.rating}
                 </TextWrapper>
                 <TextWrapper>
-                  Kostet {eaternityData.recipe["co2-value"]} λ
+                  Kostet {eaternityData.recipe["co2-value"]} g CO2
                 </TextWrapper>
               </>
             )}

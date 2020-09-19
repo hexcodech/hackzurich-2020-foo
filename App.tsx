@@ -6,37 +6,43 @@ import Navigation from "./navigation";
 import { AppContext } from "./utilities/context";
 
 export default function App() {
-  const [products, setProducts] = useState<{ ean: string; quantity: number }[]>(
-    []
-  );
+  const [products, setProducts] = useState<
+    { ean: string; quantity: number; score?: number }[]
+  >([]);
 
   const addProduct = useCallback(
-    (ean: string, quantity: number) => {
+    (ean: string, quantity: number, score?: number) => {
       if (products.find((p) => p.ean === ean)) {
         setProducts(
           products.map((p) =>
-            p.ean === ean ? { ean: p.ean, quantity: p.quantity + quantity } : p
+            p.ean === ean
+              ? { ean: p.ean, quantity: p.quantity + quantity, score: p.score }
+              : p
           )
         );
       } else {
-        setProducts([...products, { ean, quantity }]);
+        setProducts([...products, { ean, quantity, score: undefined }]);
       }
     },
     [products]
   );
 
-  const updateQuantity = useCallback(
-    (ean: string, quantity: number) => {
+  const updateProduct = useCallback(
+    (ean: string, quantity: number, score?: number) => {
       if (quantity <= 0) {
         removeProduct(ean);
         return;
       }
       if (products.find((p) => p.ean === ean)) {
         setProducts(
-          products.map((p) => (p.ean === ean ? { ean: p.ean, quantity } : p))
+          products.map((p) =>
+            p.ean === ean
+              ? { ean: p.ean, quantity, score: score ? score : p.score }
+              : p
+          )
         );
       } else {
-        setProducts([...products, { ean, quantity }]);
+        setProducts([...products, { ean, quantity, score }]);
       }
     },
     [products]
@@ -56,7 +62,7 @@ export default function App() {
           products,
           setProducts,
           addProduct,
-          updateQuantity,
+          updateProduct,
           removeProduct,
         }}
       >
