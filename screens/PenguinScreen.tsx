@@ -4,6 +4,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components";
 import { LineChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Leaf from "../components/Leaf";
+
+const color = 'rgb(0, 153, 255)';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -23,7 +27,7 @@ const chartConfig = {
   backgroundColor: "white",
   backgroundGradientFrom: "white",
   backgroundGradientTo: "white",
-  color: (opacity = 1) => `rgba(0, 153, 255, ${opacity})`,
+  color: (opacity = 1) => color,
   //barPercentage: 0.5,
   useShadowColorFromDataset: false // optional
 };
@@ -33,7 +37,7 @@ const ScreenView = styled(SafeAreaView)`
   flex: 1;
   background-color: #fff;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 `;
 
 const StyledText = styled(Text)`
@@ -41,10 +45,38 @@ const StyledText = styled(Text)`
   font-weight: bold;
 `;
 
+const CO2Text = styled(Text)`
+  font-size: 30px;
+  font-weight: bold;
+`;
+
+const CO2subtext = styled(Text)`
+  font-size: 15px;
+  font-weight: bold;
+`;
+
 const Seperator = styled(View)`
-  height: 1px;
+  height: 10px;
   width: 80%;
 `;
+
+const HSeperator = styled(View)`
+  height: 1px;
+  width: 10px;
+`;
+
+const Subscript = styled(Text)`
+  vertical-align: sub;
+`;
+
+
+const Row = styled(View)`
+  flex-direction: row;
+`;
+
+const Col = styled(View)`
+  flex-direction: column;
+`
 
 export default function TabPenguin() {
   return (
@@ -58,9 +90,25 @@ export default function TabPenguin() {
         bezier
         withDots={false}
       />
-      <StyledText>Tab Penguin</StyledText>
-      <Seperator />
       
+      <Seperator />
+      <Row>
+        <Leaf />
+        <HSeperator />
+        <Col>
+          <CO2Text>1.2 kg CO<Subscript>2</Subscript></CO2Text>
+          <Seperator />
+          <CO2subtext>durchschnittlich pro Produkt in den letzten 30 Tagen</CO2subtext>
+        </Col>
+        
+      </Row>
+      <Seperator />
+      <MaterialCommunityIcons
+              size={300}
+              name="penguin"
+              color={color}
+              style={{ marginBottom: -3 }}
+            />
     </ScreenView>
   );
 }
