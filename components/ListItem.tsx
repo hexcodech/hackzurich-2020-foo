@@ -3,7 +3,12 @@ import { FunctionComponent } from "react";
 import { ActivityIndicator, Image, Text, View } from "react-native";
 import styled from "styled-components";
 import useSwr from "swr";
-import { fetchEco, fetchMigros, MAP_RATING_TO_COLOR } from "../utilities/api";
+import {
+  fetchEco,
+  fetchMigros,
+  mapScoreToColor,
+  MAP_RATING_TO_COLOR,
+} from "../utilities/api";
 import { AppContext } from "../utilities/context";
 import Leaf from "./Leaf";
 import Price from "./Price";
@@ -130,7 +135,7 @@ export const ListItem: FunctionComponent<IProps> = React.memo(
           <Price>{quantity * product.price.item.price}</Price>
           <LeafWrapper>
             <Leaf
-              color={MAP_RATING_TO_COLOR[eaternityData?.recipe.rating || "A"]}
+              color={mapScoreToColor(eaternityData?.recipe["co2-value"] || 0)}
             />
           </LeafWrapper>
         </ItemRow>

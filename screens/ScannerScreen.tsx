@@ -126,7 +126,7 @@ const ScannerScreen: FunctionComponent<IProps> = ({ navigation }) => {
 
       <BottomSheet
         ref={sheetRef}
-        snapPoints={[Layout.window.height - 100, 425, 40]}
+        snapPoints={[Layout.window.height - 200, 425, 40]}
         initialSnap={2}
         borderRadius={10}
         enabledContentTapInteraction={false}
@@ -173,7 +173,7 @@ const ScannerScreen: FunctionComponent<IProps> = ({ navigation }) => {
                     <Text style={{ color: "#fff" }}>Einkauf abschliessen</Text>
                   </Checkout>
                 )}
-                <View style={{ height: 280 }} />
+                <View style={{ height: 600 }} />
               </ScrollView>
             </PanelView>
           </>

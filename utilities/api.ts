@@ -96,3 +96,19 @@ export const MAP_RATING_TO_COLOR = {
   D: "#e74c3c",
   E: "#c0392b",
 };
+
+export const mapScoreToColor = (score: string) => {
+  const s = parseInt(score);
+
+  if (s > 1200) {
+    return MAP_RATING_TO_COLOR["E"];
+  } else if (s > 1000) {
+    return MAP_RATING_TO_COLOR["D"];
+  } else if (s > 800) {
+    return MAP_RATING_TO_COLOR["C"];
+  } else if (s > 500) {
+    return MAP_RATING_TO_COLOR["B"];
+  } else {
+    return MAP_RATING_TO_COLOR["A"];
+  }
+};

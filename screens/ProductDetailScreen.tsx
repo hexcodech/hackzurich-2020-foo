@@ -14,7 +14,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components";
 import useSwr from "swr";
 import { ScannerParamList } from "../navigation/BottomTabNavigator";
-import { fetchEco, fetchMigros, MAP_RATING_TO_COLOR } from "../utilities/api";
+import {
+  fetchEco,
+  fetchMigros,
+  mapScoreToColor,
+  MAP_RATING_TO_COLOR,
+} from "../utilities/api";
 import { AppContext } from "../utilities/context";
 import Button from "../components/Button";
 import Leaf from "../components/Leaf";
@@ -231,7 +236,7 @@ const ProductDetailScreen: React.FunctionComponent<IProps> = ({
         <IconRow>
           <IconWrapper>
             <Leaf
-              color={MAP_RATING_TO_COLOR[eaternityData?.recipe.rating || "A"]}
+              color={mapScoreToColor(eaternityData?.recipe["co2-value"] || "0")}
             />
           </IconWrapper>
           <View>

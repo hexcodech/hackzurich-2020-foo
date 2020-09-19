@@ -133,7 +133,9 @@ export default function TabPenguin() {
         <Leaf />
         <HSeperator />
         <Col>
-          <CO2Text>{data ? data[data.length - 1].score : "-"}g CO2</CO2Text>
+          <CO2Text>
+            {data ? data[data.length - 1].score.toFixed(2) : "0.00"}g CO2
+          </CO2Text>
           <Seperator />
           <CO2subtext>Schnitt der letzten 30 Tagen</CO2subtext>
         </Col>
